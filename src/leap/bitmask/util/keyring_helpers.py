@@ -19,11 +19,15 @@ Keyring helpers.
 """
 try:
     import keyring
-    from keyring.backends.file import EncryptedKeyring, PlaintextKeyring
-    OBSOLETE_KEYRINGS = [
-        EncryptedKeyring,
-        PlaintextKeyring
-    ]
+    try:
+        from keyring.backends.file import EncryptedKeyring, PlaintextKeyring
+        OBSOLETE_KEYRINGS = [EncryptedKeyring, PlaintextKeyring]
+    except ImportError:
+        try:
+            from keyrings.alt.file import EncryptedKeyring, PlaintextKeyring
+            OBSOLETE_KEYRINGS = [EncryptedKeyring, PlaintextKeyring]
+        except ImportError:
+            OBSOLETE_KEYRINGS = []
     canuse = lambda kr: (
         kr is not None and
         kr.__class__ not in OBSOLETE_KEYRINGS)
